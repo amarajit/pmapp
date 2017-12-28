@@ -1,0 +1,64 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">{{oper}} {{pageTitle}}
+  </div>
+
+  <div class="panel-body">
+    <form class="form-horizontal" novalidate (ngSubmit)="saveUser()" [formGroup]='userForm'>
+      <fieldset>
+        <div class="form-group" [ngClass]="{'has-error' : displayMessage.firstName}">
+          <label class="col-md-2 control-label" for="">First Name</label>
+          <div class="col-md-8">
+            <input class="form-control" id="firstNameId" type="text" formControlName="firstName" />
+            <span class="help-block" *ngIf="displayMessage.firstName">
+              {{displayMessage.firstName}}
+            </span>
+          </div>
+        </div>
+
+
+
+        <div class="form-group" [ngClass]="{'has-error' : displayMessage.lastName}">
+          <label class="col-md-2 control-label" for="">Last Name</label>
+          <div class="col-md-8">
+            <input class="form-control" id="lastNameId" type="text" formControlName="lastName" />
+            <span class="help-block" *ngIf="displayMessage.lastName">
+              {{displayMessage.lastName}}
+            </span>
+          </div>
+        </div>
+
+
+        <div class="form-group" [ngClass]="{'has-error' : displayMessage.employeeId}">
+          <label class="col-md-2 control-label" for="">Employee ID</label>
+          <div class="col-md-8">
+            <input class="form-control" id="employeeId" type="text" formControlName="employeeId" />
+            <span class="help-block" *ngIf="displayMessage.employeeId">
+              {{displayMessage.employeeId}}
+            </span>
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <div class="col-md-4 col-md-oofset-2">
+            <span>
+              <button class="btn btn-primary" type="submit" style="width:80px;margin-right:10px" [disabled]='!userForm.valid'>
+                {{oper}}
+              </button>
+            </span>
+          </div>
+          <div class="col-md-4 col-md-oofset-2">
+            <span>
+              <button class="btn btn-primary" type="reset" style="width:80px;" (click)='onResetClick()'> Reset </button>
+            </span>
+          </div>
+        </div>
+        
+      </fieldset>
+        
+    </form>
+    <div *ngIf='successMessage'>{{successMessage}}</div>
+    <pm-user-list (notify)='onNotify($event)' (operation)='onOperation($event)'></pm-user-list>
+  
+       <div class='has-error' *ngIf='errorMessage'>{{errorMessage}}</div>
+  </div>

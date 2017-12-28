@@ -1,0 +1,51 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">{{pageTitle}}
+  </div>
+
+  <div class="panel-body">
+     <div class="row">
+       
+       <div class="col-md-6">
+          <label class="col-md-2 control-label" for="">Search:</label>
+         <input type='text'  [(ngModel)]='listFilter'/>
+       </div>
+
+       
+       <div class="col-md-5">
+          <label class="col-md-2 control-label" for="">Sort:</label>
+        <button class="btn btn-primary"   (click)="clickedOn('firstName')"> First Name </button>
+        <button class="btn btn-primary"  (click)="clickedOn('lastName')"> Last Name </button>
+        <button class="btn btn-primary"  (click)="clickedOn('employeeId')"> Id </button>
+       </div>
+
+     </div>
+
+
+    <div class='table-responsive'>
+      <table class='table' *ngIf='users && users.length'>
+        
+          <tbody *ngFor="let user of users | userFilter:listFilter | sortByUser :sortFilter">
+            <tr>
+              <td> <input type='text' value='{{user.firstName}}' disabled></td>
+              <td>
+                  <button class="btn btn-primary"  style="width:80px;" (click)="onClick(user, 'Update')"> Edit </button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type='text' value='{{user.lastName}}' disabled> </td>
+              <td>
+                  <button class="btn btn-primary"  style="width:80px;" (click)="onClick(user, 'Delete')"> Delete </button>
+              </td>
+            </tr>
+           <tr>
+              <td> <input type='text' value='{{user.employeeId}}' disabled> </td>
+              <td></td>
+            </tr>
+          
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class='has-error' *ngIf='errorMessage'>{{errorMessage}}</div>
+  </div>

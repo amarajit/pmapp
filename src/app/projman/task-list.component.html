@@ -1,0 +1,68 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">{{pageTitle}}
+    </div>
+
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-5">
+                <label class="col-md-3 control-label" for="">Project:</label>
+                <input type='text' name='project' id='projectId' />
+                <button class="btn btn-primary" (click)="clickedOn('Search')"> Search </button>
+            </div>
+
+
+            <div class="col-md-6">
+                <label class="col-md-2 control-label" for="">Sort Task By:</label>
+                <button class="btn btn-primary" (click)="clickedOn('startDate')"> Start Date </button>
+                <button class="btn btn-primary" (click)="clickedOn('endDate')"> End Date </button>
+                <button class="btn btn-primary" (click)="clickedOn('priority')"> Priority </button>
+                <button class="btn btn-primary" (click)="clickedOn('completed')"> Completed </button>
+            </div>
+
+        </div>
+
+        <div class='table-responsive' *ngIf='tasks && tasks.length' >
+            <table class='table' *ngFor="let task of tasks | sortByTask : sortFilter">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Parent</th>
+                        <th>Priority</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type='text' value='{{task.task}}' disabled>
+                        </td>
+                        <td>
+                            <input type='text' value='{{task.parentTask}}' disabled>
+                        </td>
+                        <td>
+                            <input type='text' value='{{task.priority}}' disabled>
+                        </td>
+                        <td>
+                            <input type='text' value='{{task.startDate}}' disabled>
+                        </td>
+                        <td>
+                            <input type='text' value='{{task.endDate}}' disabled>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" style="width:80px;"> Edit </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" style="width:80px;"> End Task </button>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class='has-error' *ngIf='errorMessage'>{{errorMessage}}</div>
+    </div>

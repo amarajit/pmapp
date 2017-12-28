@@ -1,0 +1,72 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">{{pageTitle}}
+  </div>
+
+  <div class="panel-body">
+
+    <div class="row">
+      <label class="col-md-2 control-label" for="">Search:</label>
+      <div class="col-md-4">
+        <input type='text' [(ngModel)]='listFilter' />
+      </div>
+    </div>
+    <div class="row">
+      <label class="col-md-2 control-label" for="">Sort:</label>
+      <div class="col-md-6">
+        <button class="btn btn-primary" (click)="clickedOn('startDate')"> Start Date </button>
+        <button class="btn btn-primary" (click)="clickedOn('endDate')"> End Date </button>
+        <button class="btn btn-primary" (click)="clickedOn('priority')"> Priority </button>
+        <button class="btn btn-primary" (click)="clickedOn('completed')"> Completed </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class='table-responsive'>
+    <table class='table' *ngIf='projects && projects.length'>
+
+      <tbody *ngFor="let project of projects | projectFilter:listFilter | sortByProject :sortFilter">
+        <tr>
+          <td>
+            <label class="control-label" for="">Project:</label>
+            <input type='text' value='{{project.project}}' disabled />
+          </td>
+          <td>
+            <label class="control-label" for="">Priority:</label>
+            <input type='text' value='{{project.priority}}' disabled />
+          </td>
+          <td>
+            <button class="btn btn-primary" style="width:80px;" (click)="onClick(project, 'Update')"> Update </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label class="control-label" for="">No of Tasks:</label>
+            <input type='text' disabled />
+          </td>
+          <td>
+            <label class="control-label" for="">Completed:</label>
+              <input type='text' disabled />
+           </td>
+          <td>
+            <button class="btn btn-primary" style="width:80px;" (click)="onClick(project, 'Delete')"> Suspend </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label class="control-label" for="">Start Date:</label>
+            <input type='text' value='{{project.startDate}}' disabled /> </td>
+          <td>
+            <label class="control-label" for="">End Date:</label>
+            <input type='text' value='{{project.endDate}}' disabled /> </td>
+          <td></td>
+        </tr>
+
+
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class='has-error' *ngIf='errorMessage'>{{errorMessage}}</div>
+</div>

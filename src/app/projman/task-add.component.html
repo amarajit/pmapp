@@ -1,0 +1,203 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">{{pageTitle}}
+  </div>
+
+  <div class="panel-body">
+    <form class="form-horizontal" novalidate (ngSubmit)="saveTask()" [formGroup]='taskForm'>
+
+      <fieldset>
+
+        <div class="form-group" [ngClass]="{'has-error' : displayMessage.project}">
+          <label class="col-md-2 control-label" for="">Project:</label>
+          <div class="col-md-8">
+            <input class="form-control" id="projectId" type="text" disabled formControlName="project" />
+            <span class="help-block" *ngIf="displayMessage.project">
+              {{displayMessage.project}}
+            </span>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-primary" (click)="openModal(prjModal, 'prj')">Search</button>
+          </div>
+        </div>
+
+        <div class="form-group" [ngClass]="{'has-error' : displayMessage.task}">
+          <label class="col-md-2 control-label" for="">Task:</label>
+          <div class="col-md-8">
+            <input class="form-control" id="taskId" type="text" formControlName="task" />
+            <span class="help-block" *ngIf="displayMessage.task">
+              {{displayMessage.task}}
+            </span>
+          </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="">Parent Task</label>
+          <div class="col-md-1">
+            <input class="form-control" id="ptaskId" type="checkbox" (change)='checkPTask($event)'/> 
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label" for="">Priority:</label>
+          <div class="col-md-8 slidecontainer">
+            <input type="range" min="0" max="30" value="0" class="slider" id="priorityId" formControlName="priority">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label" for="">Parent Task:</label>
+          <div class="col-md-8">
+            <input class="form-control" id="parentTaskId" type="text" disabled formControlName="parentId" />
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-primary" (click)="openModal(ptskModal, 'ptsk')" >Search</button>
+          </div>
+
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label" for="">Start Date:</label>
+          <div class="col-md-3">
+            <input class="form-control" type="date" id="startDateId" name="startDate" formControlName="startDate" />
+          </div>
+
+          <label class="col-md-2 control-label" for="">End Date:</label>
+          <div class="col-md-3">
+            <input class="form-control" type="date" id="endDateId" name="endDate" formControlName="endDate" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-2 control-label" for="">User:</label>
+          <div class="col-md-8">
+            <input class="form-control" id="userId" type="text" disabled formControlName="user" />
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-primary" (click)="openModal(usrModal, 'usr')">Search</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-md-2 ">
+            <span>
+              <button class="btn btn-primary" type="submit" style="width:80px;" [disabled]='!taskForm.valid'>
+                Add Task
+              </button>
+            </span>
+          </div>
+          <div class="col-md-2">
+            <span>
+              <button class="btn btn-primary" type="reset" style="width:80px;"> Reset </button>
+            </span>
+          </div>
+        </div>
+
+
+
+      </fieldset>
+    </form>
+  </div>
+
+  <ng-template #prjModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Select Project ID</h4>
+      <button type="button" class="close pull-right" arai-label="Close" (click)="modalRef.hide()">
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:10px">
+        <input type='text' class="form-control" placeholder='Search...' [(ngModel)]='listFilter' />
+      </div>
+      <div class="table-responsive">
+        <table class='table' *ngIf='projects && projects.length'>
+          <tBody>
+            <tr>
+              <th></th>
+              <th>Id</th>
+              <th>Project Title</th>
+            </tr>
+            <tr *ngFor='let project of projects | projectFilter:listFilter'>
+              <td>
+                <input name="user" type="radio" [value]="project" [(ngModel)]="selectedProject" (change)='selectProject(selectedProject)'
+                />
+              </td>
+              <td>{{project.id}}</td>
+              <td>{{project.project}} </td>
+            </tr>
+          </tBody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer text-right">
+      <button class="btn btn-primary" type="button" (click)='modalRef.hide()'>OK</button>
+    </div>
+  </ng-template>
+
+
+  <ng-template #ptskModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Select Parent Task ID</h4>
+      <button type="button" class="close pull-right" arai-label="Close" (click)="modalRef.hide()">
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:10px">
+        <input type='text' class="form-control" placeholder='Search...' [(ngModel)]='listFilter' />
+      </div>
+      <div class="table-responsive">
+        <table class='table' *ngIf='ptasks && ptasks.length'>
+          <tBody>
+            <tr>
+              <th></th>
+              <th>Id</th>
+              <th>Task</th>
+            </tr>
+            <tr *ngFor='let ptask of ptasks | taskFilter:listFilter'>
+              <td>
+                <input name="ptask" type="radio" [value]="ptask" [(ngModel)]="selectedTask" (change)='selectTask(selectedTask)' />
+              </td>
+              <td>{{ptask.id}}</td>
+              <td>{{ptask.ptask}} </td>
+            </tr>
+          </tBody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer text-right">
+      <button class="btn btn-primary" type="button" (click)='modalRef.hide()'>OK</button>
+    </div>
+  </ng-template>
+
+
+  <ng-template #usrModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Select User ID</h4>
+      <button type="button" class="close pull-right" arai-label="Close" (click)="modalRef.hide()">
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:10px">
+        <input type='text' class="form-control" placeholder='Search...' [(ngModel)]='listFilter' />
+      </div>
+      <div class="table-responsive">
+        <table class='table' *ngIf='users && users.length'>
+          <tBody>
+            <tr>
+              <th></th>
+              <th>Id</th>
+              <th>Name</th>
+            </tr>
+            <tr *ngFor='let user of users | userFilter:listFilter'>
+              <td>
+                <input name="user" type="radio" [value]="user" [(ngModel)]="selectedUser" (change)='selectUser(selectedUser)' />
+              </td>
+              <td>{{user.id}}</td>
+              <td>{{user.firstName}} {{user.lastName}}</td>
+            </tr>
+          </tBody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer text-right">
+      <button class="btn btn-primary" type="button" (click)='modalRef.hide()'>OK</button>
+    </div>
+  </ng-template>
