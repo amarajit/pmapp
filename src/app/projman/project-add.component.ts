@@ -25,7 +25,8 @@ import 'rxjs/add/observable/fromEvent';
 })
 export class ProjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(FormControlName, { read: ElementRef }) formInputElements: ElementRef[];
-  
+  currentDate;
+  defaultEndDate;
   chosen: boolean = false;
   projectForm: FormGroup;
   project: IProject;
@@ -35,8 +36,7 @@ export class ProjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
   pageTitle: string = ' Project';
   managerId : string;
   modalRef: BsModalRef;
-  //marked : boolean;
-
+ 
   displayMessage: { [key: string]: string } = {};
   private genericValidator: GenericValidator;
   private validationMessages: { [key: string]: { [key: string]: string } };
@@ -50,6 +50,9 @@ export class ProjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
       project: { required: 'Project title is required.' }
     };
     this.genericValidator = new GenericValidator(this.validationMessages);
+    this.currentDate = new Date();
+    this.defaultEndDate = new Date(this.currentDate.getTime() + (1000*60*60*24));
+       
   }
 
   ngOnInit(): void {
@@ -60,11 +63,13 @@ export class ProjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
       this.projectForm = this.fb.group({
       id: '',
       project: ['', Validators.required],
-      startDate: '',
-      endDate: '',
+      startDate: [{value: this.currentDate,disabled:true}],
+      endDate: [{value:'',disabled:true}],
       priority: '0',
-      managerId : ['', Validators.required]
-    })
+      managerId : [{value:'', disabled:true}, Validators.required],
+      taskCount : 0,
+      completedTaskCount : 0
+    });
 
   }
 
@@ -77,12 +82,9 @@ export class ProjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  noneSelected() {
-    return this.chosen;
-  }
-
   saveProject() : void {
     let p = Object.assign({}, this.project, this.projectForm.value);
+    p.managerId=this.projectForm.controls['managerId'].value;
     this.projectService.saveProject(p)
     .subscribe(
       () => this.onSaveComplete(),
@@ -110,7 +112,8 @@ export class ProjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
           endDate : project.endDate,
           startDate : project.startDate,
           project : [project.project, Validators.required],
-          managerId : [project.managerId, Validators.required]
+          managerId : [project.managerId, Validators.required],
+          taskCount:[project.taskCount]
         })
     
   }
@@ -132,5 +135,16 @@ export class ProjectAddComponent implements OnInit, AfterViewInit, OnDestroy {
     this.projectForm.patchValue({managerId: user.id});
   }
 
-   
+  checkDates(e) : void{
+    if(e.target.checked){
+        this.projectForm.controls['startDate'].enable();
+        this.projectForm.controls['endDate'].enable();
+    } else {
+      this.projectForm.controls['startDate'].disable();
+      this.projectForm.controls['startDate'].reset();
+      this.projectForm.controls['endDate'].disable();
+      this.projectForm.controls['endDate'].reset();
+    }
+  }
+  
 }

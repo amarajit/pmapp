@@ -38,7 +38,7 @@ export class PtaskService {
          .catch(this.handleError)
   }
 
-  saveTask(task : IPTask) : Observable<IPTask> {
+  savePTask(task : IPTask) : Observable<IPTask> {
 
       let headers = new Headers({'Content-Type':'application/json'});
       let options = new RequestOptions({headers : headers});

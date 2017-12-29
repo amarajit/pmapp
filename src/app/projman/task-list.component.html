@@ -3,66 +3,104 @@
     </div>
 
     <div class="panel-body">
+        <form class="form-horizontal" novalidate [formGroup]='projectForm'>
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-5">
+                        <label class="col-md-3 control-label" for="">Project:</label>
+                        <input type='text' name='project' id='projectId' formControlName='projectId' />
+                        <button type="button" class="btn btn-primary" (click)="openModal(prjModal)">Search</button>
+                    </div>
+                </div>
 
-        <div class="row">
-            <div class="col-md-5">
-                <label class="col-md-3 control-label" for="">Project:</label>
-                <input type='text' name='project' id='projectId' />
-                <button class="btn btn-primary" (click)="clickedOn('Search')"> Search </button>
+                <div class="col-md-6">
+                    <label class="col-md-2 control-label" for="">Sort:</label>
+                    <button class="btn btn-primary" (click)="clickedOn('startDate')"> Start Date </button>
+                    <button class="btn btn-primary" (click)="clickedOn('endDate')"> End Date </button>
+                    <button class="btn btn-primary" (click)="clickedOn('priority')"> Priority </button>
+                    <button class="btn btn-primary" (click)="clickedOn('completed')"> Completed </button>
+                </div>
+
             </div>
 
+            <div class='table-responsive' *ngIf='tasks && tasks.length'>
+                <table class='table' *ngFor="let task of tasks | sortByTask : sortFilter">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Parent</th>
+                            <th>Priority</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type='text' value='{{task.task}}' disabled>
+                            </td>
+                            <td>
+                                <input type='text' value='{{task.parentId}}' disabled>
+                            </td>
+                            <td>
+                                <input type='text' value='{{task.priority}}' disabled>
+                            </td>
+                            <td>
+                                <input type='text' value='{{task.startDate}} ' disabled>
+                            </td>
+                            <td>
+                                <input type='text' value='{{task.endDate}}' disabled>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" style="width:80px;" (click)='updateTask($event, task.id)'> Edit </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" style="width:80px;" (click)='endTask($event, task)'> End Task </button>
+                            </td>
 
-            <div class="col-md-6">
-                <label class="col-md-2 control-label" for="">Sort Task By:</label>
-                <button class="btn btn-primary" (click)="clickedOn('startDate')"> Start Date </button>
-                <button class="btn btn-primary" (click)="clickedOn('endDate')"> End Date </button>
-                <button class="btn btn-primary" (click)="clickedOn('priority')"> Priority </button>
-                <button class="btn btn-primary" (click)="clickedOn('completed')"> Completed </button>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-        </div>
-
-        <div class='table-responsive' *ngIf='tasks && tasks.length' >
-            <table class='table' *ngFor="let task of tasks | sortByTask : sortFilter">
-                <thead>
-                    <tr>
-                        <th>Task</th>
-                        <th>Parent</th>
-                        <th>Priority</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <input type='text' value='{{task.task}}' disabled>
-                        </td>
-                        <td>
-                            <input type='text' value='{{task.parentTask}}' disabled>
-                        </td>
-                        <td>
-                            <input type='text' value='{{task.priority}}' disabled>
-                        </td>
-                        <td>
-                            <input type='text' value='{{task.startDate}}' disabled>
-                        </td>
-                        <td>
-                            <input type='text' value='{{task.endDate}}' disabled>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary" style="width:80px;"> Edit </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary" style="width:80px;"> End Task </button>
-                        </td>
-
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class='has-error' *ngIf='errorMessage'>{{errorMessage}}</div>
+            <div class='has-error' *ngIf='errorMessage'>{{errorMessage}}</div>
+        </form>
     </div>
+
+
+    <ng-template #prjModal>
+        <div class="modal-header">
+            <h4 class="modal-title pull-left">Select Project ID</h4>
+            <button type="button" class="close pull-right" arai-label="Close" (click)="modalRef.hide()">
+            </button>
+        </div>
+        <div class="modal-body">
+            <div style="margin-bottom:10px">
+                <input type='text' class="form-control" placeholder='Search...' [(ngModel)]='listFilter' />
+            </div>
+            <div class="table-responsive">
+                <table class='table' *ngIf='projects && projects.length'>
+                    <tBody>
+                        <tr>
+                            <th></th>
+                            <th>Id</th>
+                            <th>Project Title</th>
+                        </tr>
+                        <tr *ngFor='let project of projects | projectFilter:listFilter'>
+                            <td>
+                                <input name="user" type="radio" [value]="project" [(ngModel)]="selectedProject" (change)='selectProject(selectedProject)'
+                                />
+                            </td>
+                            <td>{{project.id}}</td>
+                            <td>{{project.project}} </td>
+                        </tr>
+                    </tBody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer text-right">
+            <button class="btn btn-primary" type="button" (click)='modalRef.hide()'>OK</button>
+        </div>
+    </ng-template>

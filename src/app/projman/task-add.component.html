@@ -10,7 +10,7 @@
         <div class="form-group" [ngClass]="{'has-error' : displayMessage.project}">
           <label class="col-md-2 control-label" for="">Project:</label>
           <div class="col-md-8">
-            <input class="form-control" id="projectId" type="text" disabled formControlName="project" />
+            <input class="form-control" id="projectId" type="text" formControlName="project" />
             <span class="help-block" *ngIf="displayMessage.project">
               {{displayMessage.project}}
             </span>
@@ -69,7 +69,7 @@
         <div class="form-group">
           <label class="col-md-2 control-label" for="">User:</label>
           <div class="col-md-8">
-            <input class="form-control" id="userId" type="text" disabled formControlName="user" />
+            <input class="form-control" id="userId" type="text" formControlName="user" />
           </div>
           <div class="col-md-2">
             <button type="button" class="btn btn-primary" (click)="openModal(usrModal, 'usr')">Search</button>
@@ -90,10 +90,7 @@
             </span>
           </div>
         </div>
-
-
-
-      </fieldset>
+       </fieldset>
     </form>
   </div>
 
@@ -156,7 +153,7 @@
                 <input name="ptask" type="radio" [value]="ptask" [(ngModel)]="selectedTask" (change)='selectTask(selectedTask)' />
               </td>
               <td>{{ptask.id}}</td>
-              <td>{{ptask.ptask}} </td>
+              <td>{{ptask.task}} </td>
             </tr>
           </tBody>
         </table>

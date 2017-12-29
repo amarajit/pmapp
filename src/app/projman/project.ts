@@ -4,5 +4,7 @@ export interface IProject{
     startDate : string,
     endDate : string,
     priority : string,
-    managerId : string   
+    managerId : string,
+    taskCount : number,
+    completedTaskCount :number
 }

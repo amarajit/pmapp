@@ -20,14 +20,15 @@
         <div class="form-group">
           <label class="col-md-3 control-label" for="">Set Date</label>
           <div class="col-md-1">
-            <input class="form-control" id="dateId" type="checkbox" />
+            <input class="form-control" id="dateId" type="checkbox" (change)='checkDates($event)'/>
           </div>
         </div>
 
         <div class="form-group">
           <label class="col-md-2 control-label" for="">Start Date:</label>
           <div class="col-md-8">
-            <input class="form-control" type="date" id="startDateId" name="startDate" formControlName="startDate" />
+            <input class="form-control" type="date" id="startDateId" [(ngModel)]='currentDate'
+            name="startDate" formControlName="startDate" />
 
           </div>
         </div>
@@ -35,7 +36,7 @@
         <div class="form-group">
           <label class="col-md-2 control-label" for="">End Date:</label>
           <div class="col-md-8">
-            <input class="form-control" type="date" name="endDate" formControlName="endDate" />
+            <input class="form-control" type="date" name="endDate" [(ngModel)]='defaultEndDate' formControlName="endDate" />
           </div>
         </div>
         <div class="form-group">
@@ -48,7 +49,7 @@
         <div class="form-group">
           <label class="col-md-2 control-label" for="">Manager:</label>
           <div class="col-md-4">
-            <input class="form-control" id="managerId" type="text" disabled formControlName='managerId'/>
+            <input class="form-control" id="managerId" type="text" formControlName='managerId'/>
           </div>
           <div class="col-md-2">
               <button type="button" class="btn btn-primary" (click)="openModal(mgrModal)">Search</button>
@@ -90,7 +91,7 @@
           <tBody>
             <tr>
               <th></th>
-              <th>EmployeeId</th>
+              <th>Id</th>
               <th>Name</th>
             </tr>
             <tr *ngFor='let user of users | userFilter:listFilter'>

@@ -32,6 +32,7 @@ import { PtaskService } from './ptask.service';
       {path:'user', component: UserEditComponent},
       {path:'project', component: ProjectAddComponent},
       {path:'task', component: TaskAddComponent},
+      {path:'task/:id', component: TaskAddComponent},
       {path:'users', component: UserListComponent},
       {path:'tasks', component: TaskListComponent},
     ]),

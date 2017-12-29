@@ -36,7 +36,9 @@ export class TaskAddComponent implements OnInit, AfterViewInit, OnDestroy {
   modalRef: BsModalRef;
   projects: IProject[];
   ptasks: IPTask[];
+  ptask: IPTask;
   users: IUser[];
+  isParentTask: boolean = false;
 
   displayMessage: { [key: string]: string } = {};
   private genericValidator: GenericValidator;
@@ -45,7 +47,7 @@ export class TaskAddComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private fb: FormBuilder, private route: ActivatedRoute,
     private router: Router, private ptaskService: PtaskService,
     private projectService: ProjectService, private modalService: BsModalService,
-    private userService: UserService, private taskService : TaskService) {
+    private userService: UserService, private taskService: TaskService) {
     this.validationMessages = {
       task: { required: 'Task is required.' },
       project: { required: 'Project must be selected.' }
@@ -54,6 +56,7 @@ export class TaskAddComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+
     this.taskForm = this.fb.group({
       id: '',
       task: ['', Validators.required],
@@ -62,29 +65,71 @@ export class TaskAddComponent implements OnInit, AfterViewInit, OnDestroy {
       priority: '0',
       status: '',
       parentId: '',
-      project: '',
-      user: ''
-      
-    })
+      project: [{ value: '', disabled: true }],
+      user: [{ value: '', disabled: true }]
+    });
 
+    this.sub = this.route.params.subscribe(
+      params => {
+        let taskId = +params['id'];
+        if (taskId !== undefined) {
+          this.getTaskToBeUpdated(taskId);
+        }
+      });
+  }
+
+  getTaskToBeUpdated(taskId: number): void {
+    this.taskService.getTask(taskId.toString()).subscribe(
+      (task : ITask) => this.onTaskRetrieved(task),
+      error => this.errorMessage = <any>error);
+     }
+     
+  onTaskRetrieved(task : ITask) : void{
+    if(this.taskForm){
+      this.taskForm.reset();
+    }
+    this.task=task;
+    this.pageTitle = 'Update Task';
+    this.taskForm.patchValue({
+      id: this.task.id,
+      task: this.task.task,
+      startDate: this.task.startDate,
+      endDate: this.task.endDate,
+      priority: this.task.priority,
+      status: this.task.status,
+      parentId: this.task.parentId,
+      project: this.task.project,
+      user: this.task.user
+    });
   }
 
   ngAfterViewInit(): void {
     let controlBlurs: Observable<any>[] = this.formInputElements
       .map((formControl: ElementRef) => Observable.fromEvent(formControl.nativeElement, 'blur'));
 
-    Observable.merge(this.taskForm.valueChanges, ...controlBlurs).debounceTime(800).subscribe(value => {
+    Observable.merge(this.taskForm.valueChanges, ...controlBlurs).debounceTime(100).subscribe(value => {
       this.displayMessage = this.genericValidator.processMessages(this.taskForm);
     });
   }
 
   saveTask(): void {
-    let p = Object.assign({}, this.task, this.taskForm.value);
-    this.taskService.saveTask(p)
-      .subscribe(
-      () => this.onSaveComplete(),
-      (error: any) => this.errorMessage = <any>error
-      );
+    if (this.isParentTask) {
+      let p = Object.assign({}, this.ptask, this.taskForm.value);
+      this.ptaskService.savePTask(p)
+        .subscribe(
+        () => this.onSaveComplete(),
+        (error: any) => this.errorMessage = <any>error
+        );
+    } else {
+      let p = Object.assign({}, this.task, this.taskForm.value);
+      p.project = this.taskForm.controls['project'].value;
+      p.user = this.taskForm.controls['user'].value;
+      this.taskService.saveTask(p)
+        .subscribe(
+        () => this.onSaveComplete(),
+        (error: any) => this.errorMessage = <any>error
+        );
+    }
 
   }
 
@@ -104,11 +149,11 @@ export class TaskAddComponent implements OnInit, AfterViewInit, OnDestroy {
       this.projectService.getProjects().subscribe(
         projects => this.projects = projects,
         error => this.errorMessage = <any>error);
-    } else if (type === 'ptsk'){
+    } else if (type === 'ptsk') {
       this.ptaskService.getPTasks().subscribe(
         ptasks => this.ptasks = ptasks,
         error => this.errorMessage = <any>error);
-    } else if (type === 'usr'){
+    } else if (type === 'usr') {
       this.userService.getUsers().subscribe(
         users => this.users = users,
         error => this.errorMessage = <any>error);
@@ -128,12 +173,14 @@ export class TaskAddComponent implements OnInit, AfterViewInit, OnDestroy {
     this.taskForm.patchValue({ user: user.id });
   }
 
-  checkPTask(e){
-    if(e.target.checked){
+  checkPTask(e) {
+    if (e.target.checked) {
+      this.isParentTask = true;
       this.taskForm.controls['priority'].disable();
       this.taskForm.controls['startDate'].disable();
       this.taskForm.controls['endDate'].disable();
-    } else{
+    } else {
+      this.isParentTask = false;
       this.taskForm.controls['priority'].enable();
       this.taskForm.controls['startDate'].enable();
       this.taskForm.controls['endDate'].enable();

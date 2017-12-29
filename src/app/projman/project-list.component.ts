@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { ProjectService } from './project.service';
 import { IProject } from './project';
+import { TaskService } from './task.service'; 
 
 @Component({
   selector: 'pm-project-list',
@@ -13,6 +14,7 @@ export class ProjectListComponent implements OnInit {
   errorMessage: string;
   listFilter: string;
   sortFilter: string;
+  
   @Output() notify: EventEmitter<IProject> = new EventEmitter<IProject>();
   @Output() operation: EventEmitter<string> = new EventEmitter<string>();
 
@@ -21,7 +23,7 @@ export class ProjectListComponent implements OnInit {
   ngOnInit(): void {
     this.projectService.getProjects().subscribe(
       projects => this.projects = projects,
-      error => this.errorMessage = <any>error);
+      error => this.errorMessage = <any>error);  
   }
 
   clickedOn(sortBasedOn: string) {
